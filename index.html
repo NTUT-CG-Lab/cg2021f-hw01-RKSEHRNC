@@ -13,17 +13,17 @@
 		<script src="./TTFLoader.js"></script>
 		<script src="./scoreoutputer.min.js"></script>
 		
+		<div id="info"></div>
 		<script>
-		
 			var so = new ScoreOutputer("106590045");
 			so.installCSS(function(){
-			so.addChild("創建場景", 2, false);
+			so.addChild("創建場景", 2, true);
 			so.addChild("讀取字形檔", 2, true);
-			so.addChild("將地支以圓圈排列", 2, false);
-			so.addChild("點擊跳轉網頁", 1, true);
+			so.addChild("將地支以圓圈排列", 2, true);
+			so.addChild("點擊跳轉網頁", 1, false);
 			so.addChild("顯示高等(下略", 1, true);
 			so.addChild("時鐘效果", 1, false);
-			so.addChild("ply模型", 1, true);
+			so.addChild("ply模型", 1, false);
 
 			//產生自評表，參數如下所示
 			so.renderModal(
@@ -47,7 +47,7 @@
 			//產生 "開啟自評表按鈕"
 			so.renderBtn(
 				//自評表按鈕插入位置
-				document.body,
+				document.querySelector("#info"),
 				//自評表按鈕文字
 				"開啟自評表"
 			);
@@ -62,14 +62,13 @@
 
 			let text = '子丑寅卯辰巳午未申酉戌亥';
 			const height = 20,
-				size = 70,
+				size = 30,
 				hover = 30,
 				curveSegments = 4,
 				bevelThickness = 2,
 				bevelSize = 1.5;
 
 			let font = null;
-			const mirror = true;
 
 			let targetRotation = 0;
 			let targetRotationOnPointerDown = 0;
@@ -79,6 +78,8 @@
 
 			let windowHalfX = window.innerWidth / 2;
 
+
+			
 			init();
 			animate();
 
@@ -90,7 +91,7 @@
 				// CAMERA
 
 				camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 1500 );
-				camera.position.set( 0, 400, 700 );
+				camera.position.set( 0, 300, 1000 );
 
 				cameraTarget = new THREE.Vector3( 0, 150, 0 );
 
@@ -108,7 +109,7 @@
 
 				const pointLight = new THREE.PointLight( 0xffffff, 1.5 );
 				pointLight.position.set( 0, 100, 90 );
-				pointLight.color.setHSL( Math.random(), 1, 0.5 );
+				pointLight.color.setHSL( 0, 0, 1 );
 				scene.add( pointLight );
 
 				material = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
@@ -120,7 +121,7 @@
 
 				const loader = new THREE.TTFLoader();
 				
-				loader.load( "./AiharaSignPen.ttf", function ( json ) {
+				loader.load( "./komorebi-gothic.ttf", function ( json ) {
 				console.log(json)
 					font = new THREE.Font( json );
 					createText();
@@ -214,57 +215,98 @@
 
 			function createText() {
 
-				textGeo = new THREE.TextGeometry( text, {
-
+				let setting = {
 					font: font,
-
 					size: size,
 					height: height,
 					curveSegments: curveSegments,
-
 					bevelThickness: bevelThickness,
 					bevelSize: bevelSize,
 					bevelEnabled: true
-
-				} );
-
-				textGeo.computeBoundingBox();
-				textGeo.computeVertexNormals();
-
-				const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-
-				textMesh1 = new THREE.Mesh( textGeo, material );
-
-				textMesh1.position.x = centerOffset;
-				textMesh1.position.y = hover;
-				textMesh1.position.z = 0;
-
-				textMesh1.rotation.x = 0;
-				textMesh1.rotation.y = Math.PI * 2;
-
-				group.add( textMesh1 );
-
-				if ( mirror ) {
-
-					textMesh2 = new THREE.Mesh( textGeo, material );
-
-					textMesh2.position.x = centerOffset;
-					textMesh2.position.y = - hover;
-					textMesh2.position.z = height;
-
-					textMesh2.rotation.x = Math.PI;
-					textMesh2.rotation.y = Math.PI * 2;
-
-					group.add( textMesh2 );
-
 				}
+				
+				text1 = new THREE.TextGeometry( "子", setting );
+				textMesh1 = new THREE.Mesh( text1, material );
+				textMesh1.position.y = 150;
+				group.add( textMesh1 );
+				
+				text2 = new THREE.TextGeometry( "丑", setting );
+				textMesh2 = new THREE.Mesh( text2, material );
+				textMesh2.position.x = 62;
+				textMesh2.position.y = 128;
+				group.add( textMesh2 );
+				
+				text3 = new THREE.TextGeometry( "寅", setting );
+				textMesh3 = new THREE.Mesh( text3, material );
+				textMesh3.position.x = 128;
+				textMesh3.position.y = 62;
+				group.add( textMesh3 );
+				
+				text4 = new THREE.TextGeometry( "卯", setting );
+				textMesh4 = new THREE.Mesh( text4, material );
+				textMesh4.position.x = 150;
+				group.add( textMesh4 );
+				
+				text5 = new THREE.TextGeometry( "辰", setting );
+				textMesh5 = new THREE.Mesh( text5, material );
+				textMesh5.position.x = 128;
+				textMesh5.position.y = -62;
+				group.add( textMesh5 );
+				
+				text6 = new THREE.TextGeometry( "巳", setting );
+				textMesh6 = new THREE.Mesh( text6, material );
+				textMesh6.position.x = 62;
+				textMesh6.position.y = -128;
+				group.add( textMesh6 );
 
+				text7 = new THREE.TextGeometry( "午", setting );
+				textMesh7 = new THREE.Mesh( text7, material );
+				textMesh7.position.y = -150;
+				group.add( textMesh7 );
+				
+				text8 = new THREE.TextGeometry( "未", setting );
+				textMesh8 = new THREE.Mesh( text8, material );
+				textMesh8.position.x = -62;
+				textMesh8.position.y = -128;
+				group.add( textMesh8 );
+				
+				text9 = new THREE.TextGeometry( "申", setting );
+				textMesh9 = new THREE.Mesh( text9, material );
+				textMesh9.position.x = -128;
+				textMesh9.position.y = -62;
+				group.add( textMesh9 );
+				
+				text10 = new THREE.TextGeometry( "由", setting );
+				textMesh10 = new THREE.Mesh( text10, material );
+				textMesh10.position.x = -150;
+				group.add( textMesh10 );
+				
+				text11 = new THREE.TextGeometry( "戌", setting );
+				textMesh11 = new THREE.Mesh( text11, material );
+				textMesh11.position.x = -128;
+				textMesh11.position.y = 62;
+				group.add( textMesh11 );
+				
+				text12 = new THREE.TextGeometry( "亥", setting );
+				textMesh12 = new THREE.Mesh( text12, material );
+				textMesh12.position.x = -62;
+				textMesh12.position.y = 128;
+				group.add( textMesh12 );
+				
+				text12 = new THREE.TextGeometry( "高等計算機圖形作業", setting );
+				textMesh12 = new THREE.Mesh( text12, material );
+				textMesh12.position.x = -300;
+				textMesh12.position.y = 120;
+				textMesh12.position.z = 100;
+				textMesh12.rotation.y = 0.1;
+				textMesh12.rotation.z = 0.3;
+				group.add( textMesh12 );
+				
 			}
 
 			function refreshText() {
 
 				group.remove( textMesh1 );
-				if ( mirror ) group.remove( textMesh2 );
 
 				if ( ! text ) return;
 
@@ -309,7 +351,7 @@
 
 				requestAnimationFrame( animate );
 
-				group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
+				//group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
 
 				camera.lookAt( cameraTarget );
 
